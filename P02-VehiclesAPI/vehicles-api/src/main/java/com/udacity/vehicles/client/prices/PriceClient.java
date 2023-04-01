@@ -35,7 +35,7 @@ public class PriceClient {
             Price price = client
                     .get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("services/price/")
+                            .path("pricing-service/price/")
                             .queryParam("vehicleId", vehicleId)
                             .build()
                     )
