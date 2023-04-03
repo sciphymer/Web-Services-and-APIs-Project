@@ -83,10 +83,10 @@ class CarController {
      * @return response that the vehicle was updated in the system
      */
     @PutMapping("/{id}")
-    ResponseEntity<?> put(@PathVariable Long id, @Valid @RequestBody Car car) {
+    ResponseEntity<?> put(@PathVariable Long id, @Valid @RequestBody Car car) throws URISyntaxException {
         car.setId(id);
-        Car newCar = carService.save(car);
-        Resource<Car> resource = assembler.toResource(newCar);
+        Car updatedCar = carService.save(car);
+        Resource<Car> resource = assembler.toResource(updatedCar);
         return ResponseEntity.ok(resource);
     }
 

@@ -4,12 +4,8 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -99,7 +95,7 @@ public class CarControllerTest {
 
         mvc.perform(
                 get(new URI("/cars"))
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.carList.size()",is(1)))
                 .andExpect(jsonPath("$._embedded.carList[0].details.manufacturer.name"
@@ -122,7 +118,7 @@ public class CarControllerTest {
         given(carService.findById(1L)).willReturn(car);
         mvc.perform(
                 get(new URI("/cars/1"))
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id",is(1)));
     }
@@ -141,6 +137,31 @@ public class CarControllerTest {
         mvc.perform(delete("/cars/1"))
                 .andExpect(status().isNoContent());
         verify(carService, times(1)).delete(1L);
+    }
+
+    /**
+     * Tests the update of a single car details.
+     * @throws Exception if the update operation of a vehicle fails
+     */
+    @Test
+    public void updateCar() throws Exception {
+        /**
+         * TODO: Add a test to check whether a vehicle is appropriately updated
+         *   when the `put` method is called from the Car Controller. This
+         *   should utilize the car from `getCar()` below.
+         */
+        Car mockedCar = getCar();
+        mockedCar.setId(1L);
+
+        given(carService.save(any(Car.class))).willReturn(mockedCar);
+                mvc.perform(put(new URI("/cars/1"))
+                        .content(json.write(mockedCar).getJson())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                )
+                .andExpect(status().isOk());
+
+
     }
 
     /**
